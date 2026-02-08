@@ -4,7 +4,7 @@ A lightweight cross-platform client that connects to the Discord AI Bot server v
 
 ## Overview
 
-Control Client is the companion application to the Discord AI Bot that runs on Windows and Linux machines. It establishes a secure WebSocket connection to the bot's Socket.IO server, listens for commands, captures screenshots when requested, and executes PC control actions such as keyboard shortcuts, mouse clicks, and text input using the nut.js automation library.
+Control Client is the companion application to the Discord AI Bot that runs on Windows and Linux machines. It establishes a secure WebSocket connection to the bot's Socket.IO server, listens for commands, captures screenshots when requested, and executes PC control actions such as keyboard shortcuts, mouse clicks, and text input using native Wayland tools on Linux (hyprctl and wtype) and system APIs on Windows.
 
 ## Features
 
@@ -24,7 +24,8 @@ Control Client is the companion application to the Discord AI Bot that runs on W
 - **Discord AI Bot Server**: Must be running and accessible
 - **Linux System Dependencies** (Wayland only):
   - `grim`: Screenshot utility for Wayland compositors
-  - `wtype`: Virtual keyboard for Wayland (text input)
+  - `wtype`: Virtual keyboard for Wayland (text input and key presses)
+  - `hyprctl`: Hyprland control utility (mouse actions)
 
 ## Installation
 
@@ -41,17 +42,17 @@ On Linux systems with Wayland, install the required system utilities:
 
 **Arch Linux / Manjaro:**
 ```bash
-sudo pacman -S grim wtype
+sudo pacman -S grim wtype hyprland
 ```
 
 **Ubuntu / Debian:**
 ```bash
-sudo apt install grim wtype
+sudo apt install grim wtype wayland-utils
 ```
 
 **Fedora:**
 ```bash
-sudo dnf install grim wtype
+sudo dnf install grim wtype wayland-utils
 ```
 
 ### 3. Install Node.js Dependencies
@@ -102,14 +103,6 @@ npm run dev
 
 ```
 control-client/
-├── packages/                  # Pre-built nut.js packages (local dependencies)
-│   ├── nut-tree-configs-4.2.0.tgz
-│   ├── nut-tree-default-clipboard-provider-4.2.0.tgz
-│   ├── nut-tree-libnut-4.2.0.tgz
-│   ├── nut-tree-libnut-linux-2.7.1.tgz
-│   ├── nut-tree-nut-js-4.2.0.tgz
-│   ├── nut-tree-provider-interfaces-4.2.0.tgz
-│   └── nut-tree-shared-4.2.0.tgz
 ├── src/
 │   ├── types/
 │   │   └── actions.ts         # Action type definitions
@@ -238,7 +231,7 @@ The native Linux module (`libnut-linux`) was built from the [nut-tree/libnut-cor
 - **CPU**: Any modern processor
 - **Network**: Stable internet connection
 - **Permissions**: User-level permissions (admin not required for most actions)
-- **Linux**: Wayland compositor with `grim` and `wtype` installed
+- **Linux**: Wayland compositor with `grim`, `wtype`, and `hyprctl` installed
 
 ### Recommended Requirements
 
@@ -279,15 +272,16 @@ The native Linux module (`libnut-linux`) was built from the [nut-tree/libnut-cor
 - Ensure client has focus/permissions for actions
 - Restart client and retry
 
-### Native Module Issues
+### Automation Not Working
 
-**Symptoms:** nut.js fails to load or crashes
+**Symptoms:** Actions fail to execute or produce no effect
 
 **Solutions:**
-- **Linux**: Ensure X11 libraries are installed (`libx11-dev`, `libxtst-dev` on Ubuntu/Debian) and Wayland utilities (`grim`, `wtype`)
-- **Windows**: Ensure Visual C++ Redistributables are installed
-- Try rebuilding native modules: `npm rebuild`
-- Check Node.js version is 18.x or higher
+- **Linux**: Ensure required Wayland utilities are installed (`grim`, `wtype`, `hyprctl`)
+- Verify Hyprland compositor is running
+- Check client has appropriate permissions for automation
+- Try manually testing tools: `hyprctl dispatch cursorpos 100 100` and `wtype "test"`
+- Ensure Node.js version is 18.x or higher
 
 ### Text Input Not Working (Linux)
 
@@ -303,14 +297,13 @@ The native Linux module (`libnut-linux`) was built from the [nut-tree/libnut-cor
 
 ### Production Dependencies
 
-- **@nut-tree/nut-js** (4.2.0): Native system automation library
-- **@nut-tree/libnut-linux** (2.7.1): Linux native bindings for PC control
 - **socket.io-client** (^4.8.3): WebSocket client for real-time communication
 
 ### System Dependencies (Linux/Wayland)
 
 - **grim**: Screenshot utility for Wayland compositors (captures screen content)
-- **wtype**: Virtual keyboard for Wayland (text input automation)
+- **wtype**: Virtual keyboard for Wayland (text input and key press automation)
+- **hyprctl**: Hyprland control utility (mouse position and click automation)
 
 ### Development Dependencies
 
@@ -406,10 +399,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- [nut.js](https://github.com/nut-tree/nut.js) - Native UI automation library
-- [libnut-core](https://github.com/nut-tree/libnut-core) - Native automation bindings
 - [grim](https://sr.ht/~emersion/grim/) - Wayland screenshot utility
-- [wtype](https://github.com/atx/wtype) - Wayland text input tool
+- [wtype](https://github.com/atx/wtype) - Wayland text input and key press tool
+- [Hyprland](https://github.com/hyprwm/Hyprland) - Dynamic tiling Wayland compositor
 - [Socket.IO](https://socket.io/) - WebSocket communication framework
 - [TypeScript](https://www.typescriptlang.org/) - Type-safe JavaScript
 - [Node.js](https://nodejs.org/) - JavaScript runtime
