@@ -1,2 +1,2 @@
-*.tgz binary
+*.tgz -text
 * text eol=lf
