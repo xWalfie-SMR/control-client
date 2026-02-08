@@ -1,2 +1,2 @@
-*.tgz -text
+*.tgz filter=lfs diff=lfs merge=lfs -text
 * text eol=lf
