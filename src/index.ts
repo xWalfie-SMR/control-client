@@ -1,8 +1,13 @@
 import { io } from 'socket.io-client';
-import screenshot from 'screenshot-desktop';
-import config from './config.json' with { type: 'json' };
 import { Action } from './types/actions.js';
 import { keyboard, mouse, Key, Button } from '@nut-tree/nut-js';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import fs from 'fs';
+import config from './config.json' with { type: 'json' };
+
+//
+const execAsync = promisify(exec);
 
 // Connect to WebSocket server
 const socket = io(config.wssServer);
@@ -10,6 +15,11 @@ const socket = io(config.wssServer);
 socket.on('connect', () => {
 	console.log('Connected to WebSocket server');
 });
+
+socket.onAny((eventName, ...args) => {
+	console.log('Received event:', eventName, args);
+});
+
 
 socket.on('connect_error', (error) => {
 	console.error('WebSocket connection error:', error);
@@ -20,8 +30,11 @@ socket.on('disconnect', () => {
 });
 
 socket.on('request_screenshot', async (data: { userId: string, prompt: string }) => {
-	// Capture screenshot
-	const img = await screenshot();
+	// Capture screenshot to temp file
+	const tempFile = `/tmp/screenshot-${Date.now()}.png`;
+	await execAsync(`grim -t png ${tempFile}`);
+	const img = await fs.promises.readFile(tempFile);
+	await fs.promises.unlink(tempFile);
 	const base64 = img.toString('base64');
 
 	// Send the screenshot to the server
