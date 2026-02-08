@@ -29,12 +29,6 @@
     "*.ts": "eslint --fix"
   },
   "dependencies": {
-    "@nut-tree/default-clipboard-provider": "file:packages/nut-tree-default-clipboard-provider.tgz",
-    "@nut-tree/libnut": "file:packages/nut-tree-libnut.tgz",
-    "@nut-tree/libnut-linux": "file:packages/nut-tree-libnut-linux.tgz",
-    "@nut-tree/nut-js": "file:packages/nut-tree-nut-js.tgz",
-    "@nut-tree/provider-interfaces": "file:packages/nut-tree-provider-interfaces.tgz",
-    "@nut-tree/shared": "file:packages/nut-tree-shared.tgz",
     "socket.io-client": "^4.8.3"
   },
   "devDependencies": {
