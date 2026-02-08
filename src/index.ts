@@ -47,6 +47,7 @@ socket.on('request_screenshot', async (data: { userId: string, prompt: string })
 });
 
 socket.on('execute_actions', async (data: { userId: string, actions: Action[] }) => {
+	console.log('Executing actions:', JSON.stringify(data.actions, null, 2));
 	try {
 		for (const action of data.actions) {
 			switch (action.type) {
@@ -62,7 +63,7 @@ socket.on('execute_actions', async (data: { userId: string, actions: Action[] })
 				await new Promise(resolve => setTimeout(resolve, action.ms));
 				break;
 			case 'type':
-				await keyboard.type(action.text);
+				await execAsync(`wtype "${action.text.replace(/"/g, '\\"')}"`);
 				break;
 			case 'key_combination': {
 				const keys = action.keys.map(key => Key[key.charAt(0).toUpperCase() + key.slice(1) as keyof typeof Key]);

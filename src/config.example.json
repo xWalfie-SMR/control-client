@@ -1,0 +1,4 @@
+{
+  "wssServer": "wss://domain:port",
+  "userId": "discord user id"
+}
