@@ -14,6 +14,7 @@ const socket = io(config.wssServer);
 
 socket.on('connect', () => {
 	console.log('Connected to WebSocket server');
+	socket.emit('identify', { userId: config.userId });
 });
 
 socket.onAny((eventName, ...args) => {
