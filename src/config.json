@@ -1,3 +1,4 @@
 {
-  "wssServer": "wss://vm.xwalfie.dev:3000"
+  "wssServer": "wss://vm.xwalfie.dev:3000",
+  "userId": "your-user-id-here"
 }
