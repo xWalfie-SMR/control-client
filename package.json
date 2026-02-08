@@ -1,7 +1,7 @@
 {
   "name": "control-client",
   "version": "1.0.0",
-  "description": "Windows control client for Discord AI Bot - executes PC automation commands via WebSocket",
+  "description": "Cross-platform control client for Discord AI Bot - executes PC automation commands via WebSocket on Windows and Linux (Wayland)",
   "homepage": "https://github.com/xWalfie-SMR/control-client#readme",
   "bugs": {
     "url": "https://github.com/xWalfie-SMR/control-client/issues"
@@ -35,13 +35,11 @@
     "@nut-tree/nut-js": "file:packages/nut-tree-nut-js.tgz",
     "@nut-tree/provider-interfaces": "file:packages/nut-tree-provider-interfaces.tgz",
     "@nut-tree/shared": "file:packages/nut-tree-shared.tgz",
-    "screenshot-desktop": "^1.15.3",
     "socket.io-client": "^4.8.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@types/node": "^25.1.0",
-    "@types/screenshot-desktop": "^1.15.0",
     "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.54.0",
     "eslint": "^9.39.2",

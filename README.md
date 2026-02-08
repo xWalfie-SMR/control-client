@@ -1,10 +1,10 @@
 # Control Client
 
-A lightweight Windows client that connects to the Discord AI Bot server via WebSocket to execute PC automation commands. This client captures screenshots and performs keyboard, mouse, and typing actions based on AI-generated instructions.
+A lightweight cross-platform client that connects to the Discord AI Bot server via WebSocket to execute PC automation commands. This client captures screenshots and performs keyboard, mouse, and typing actions based on AI-generated instructions. Supports both Windows and Linux (Wayland).
 
 ## Overview
 
-Control Client is the companion application to the Discord AI Bot that runs on Windows machines. It establishes a secure WebSocket connection to the bot's Socket.IO server, listens for commands, captures screenshots when requested, and executes PC control actions such as keyboard shortcuts, mouse clicks, and text input using the nut.js automation library.
+Control Client is the companion application to the Discord AI Bot that runs on Windows and Linux machines. It establishes a secure WebSocket connection to the bot's Socket.IO server, listens for commands, captures screenshots when requested, and executes PC control actions such as keyboard shortcuts, mouse clicks, and text input using the nut.js automation library.
 
 ## Features
 
@@ -18,10 +18,13 @@ Control Client is the companion application to the Discord AI Bot that runs on W
 
 ## Prerequisites
 
-- **Operating System**: Windows 10+ or Linux
+- **Operating System**: Windows 10+ or Linux (Wayland)
 - **Node.js**: Version 18.x LTS or higher
 - **Network Access**: Outbound HTTPS connection to bot server (default: port 3000)
 - **Discord AI Bot Server**: Must be running and accessible
+- **Linux System Dependencies** (Wayland only):
+  - `grim`: Screenshot utility for Wayland compositors
+  - `wtype`: Virtual keyboard for Wayland (text input)
 
 ## Installation
 
@@ -32,7 +35,26 @@ git clone https://github.com/xWalfie-SMR/control-client.git
 cd control-client
 ```
 
-### 2. Install Dependencies
+### 2. Install System Dependencies (Linux Only)
+
+On Linux systems with Wayland, install the required system utilities:
+
+**Arch Linux / Manjaro:**
+```bash
+sudo pacman -S grim wtype
+```
+
+**Ubuntu / Debian:**
+```bash
+sudo apt install grim wtype
+```
+
+**Fedora:**
+```bash
+sudo dnf install grim wtype
+```
+
+### 3. Install Node.js Dependencies
 
 ```bash
 npm install --legacy-peer-deps
@@ -40,7 +62,7 @@ npm install --legacy-peer-deps
 
 **Note:** The `--legacy-peer-deps` flag is required due to ESLint peer dependency conflicts.
 
-### 3. Configure Server Connection
+### 4. Configure Server Connection
 
 Edit `src/config.json` to point to your Discord AI Bot server:
 
@@ -211,15 +233,16 @@ The native Linux module (`libnut-linux`) was built from the [nut-tree/libnut-cor
 
 ### Minimum Requirements
 
-- **OS**: Windows 10 (64-bit) or Linux (64-bit)
+- **OS**: Windows 10 (64-bit) or Linux (64-bit) with Wayland compositor
 - **RAM**: 512 MB available
 - **CPU**: Any modern processor
 - **Network**: Stable internet connection
 - **Permissions**: User-level permissions (admin not required for most actions)
+- **Linux**: Wayland compositor with `grim` and `wtype` installed
 
 ### Recommended Requirements
 
-- **OS**: Windows 11 or modern Linux distribution
+- **OS**: Windows 11 or modern Linux distribution (Arch, Ubuntu 22.04+, Fedora 38+)
 - **RAM**: 1 GB available
 - **Network**: Broadband connection (for fast screenshot transmission)
 
@@ -240,7 +263,8 @@ The native Linux module (`libnut-linux`) was built from the [nut-tree/libnut-cor
 **Symptoms:** Screenshot requests fail or timeout
 
 **Solutions:**
-- Verify Windows display settings are standard
+- **Linux**: Ensure `grim` is installed and accessible in PATH
+- **Windows**: Verify display settings are standard
 - Check client has permission to capture screen
 - Ensure adequate memory is available
 - Try restarting the client
@@ -260,10 +284,20 @@ The native Linux module (`libnut-linux`) was built from the [nut-tree/libnut-cor
 **Symptoms:** nut.js fails to load or crashes
 
 **Solutions:**
-- **Linux**: Ensure X11 libraries are installed (`libx11-dev`, `libxtst-dev` on Ubuntu/Debian)
+- **Linux**: Ensure X11 libraries are installed (`libx11-dev`, `libxtst-dev` on Ubuntu/Debian) and Wayland utilities (`grim`, `wtype`)
 - **Windows**: Ensure Visual C++ Redistributables are installed
 - Try rebuilding native modules: `npm rebuild`
 - Check Node.js version is 18.x or higher
+
+### Text Input Not Working (Linux)
+
+**Symptoms:** Typing actions fail or produce no output
+
+**Solutions:**
+- Ensure `wtype` is installed: `which wtype`
+- Verify Wayland compositor is running
+- Check client has appropriate permissions
+- Try manually testing: `wtype "test"`
 
 ## Dependencies
 
@@ -271,16 +305,19 @@ The native Linux module (`libnut-linux`) was built from the [nut-tree/libnut-cor
 
 - **@nut-tree/nut-js** (4.2.0): Native system automation library
 - **@nut-tree/libnut-linux** (2.7.1): Linux native bindings for PC control
-- **screenshot-desktop** (^1.15.3): Screen capture library
 - **socket.io-client** (^4.8.3): WebSocket client for real-time communication
+
+### System Dependencies (Linux/Wayland)
+
+- **grim**: Screenshot utility for Wayland compositors (captures screen content)
+- **wtype**: Virtual keyboard for Wayland (text input automation)
 
 ### Development Dependencies
 
-- **@eslint/js** (^10.0.1): ESLint core
+- **@eslint/js** (^9.39.2): ESLint core
 - **@typescript-eslint/eslint-plugin** (^8.54.0): TypeScript ESLint plugin
 - **@typescript-eslint/parser** (^8.54.0): TypeScript ESLint parser
 - **@types/node** (^25.1.0): TypeScript definitions for Node.js
-- **@types/screenshot-desktop** (^1.15.0): TypeScript definitions for screenshot-desktop
 - **eslint** (^9.39.2): JavaScript/TypeScript linter
 - **globals** (^17.3.0): Global variables for ESLint
 - **husky** (^9.1.7): Git hooks manager
@@ -336,7 +373,7 @@ Contributions are welcome! Please follow these guidelines:
 - Follow existing TypeScript configuration
 - Maintain type safety (no `any` types)
 - Add comments for complex logic
-- Test on Windows 10 and 11
+- Test on both Windows (10/11) and Linux (Wayland) when possible
 
 ## Roadmap
 
@@ -371,7 +408,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - [nut.js](https://github.com/nut-tree/nut.js) - Native UI automation library
 - [libnut-core](https://github.com/nut-tree/libnut-core) - Native automation bindings
-- [screenshot-desktop](https://github.com/bencevans/screenshot-desktop) - Cross-platform screenshot library
+- [grim](https://sr.ht/~emersion/grim/) - Wayland screenshot utility
+- [wtype](https://github.com/atx/wtype) - Wayland text input tool
 - [Socket.IO](https://socket.io/) - WebSocket communication framework
 - [TypeScript](https://www.typescriptlang.org/) - Type-safe JavaScript
 - [Node.js](https://nodejs.org/) - JavaScript runtime
